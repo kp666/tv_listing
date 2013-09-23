@@ -1,0 +1,9 @@
+msn_api:
+ -  market: india
+    site:  http://tvintl.msn.com
+    get_url: '/DiscoveryWS/GetGridData.ashx'
+    params:
+     channels: all
+     format: xml
+     mkt: hi-in
+     timezoneOffset: 330

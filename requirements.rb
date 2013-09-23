@@ -11,3 +11,15 @@ env = ENV['RAILS_ENV'] || "development"
 ActiveRecord::Base.establish_connection(yaml[env])
 require_relative 'models/category'
 require_relative 'models/daily_show'
+class Hash
+  def deep_transform_keys!(&block)
+    keys.each do |key|
+      value = delete(key)
+      self[yield(key)] = value.is_a?(Hash) ? value.deep_transform_keys!(&block) : value
+    end
+    self
+  end
+  def deep_symbolize_keys!
+    deep_transform_keys!{ |key| key.to_sym rescue key }
+  end
+end
