@@ -7,7 +7,7 @@ app_config = YAML.load_file("config/app.yml").deep_symbolize_keys!
 def process_show(daily_show, api_info)
   response = @conn.get api_info[:search][:url], api_info[:search][:params].merge(:title => daily_show.title)
   return unless response.status.to_i == 200
-  return unless response.body
+  return if response.body.to_s.blank?
   hash = ExecJS.eval(JSON.load response.body)
   hash.deep_symbolize_keys!
   shows = hash[:shows]
@@ -51,7 +51,7 @@ def process_show(daily_show, api_info)
 end
 
 def process_data(response, api_info)
-  return unless reponse.body
+  return if  response.body.to_s.blank?
   xml = response.body
   hash = XmlSimple.xml_in(xml)
   data = hash["GuideData"].first
