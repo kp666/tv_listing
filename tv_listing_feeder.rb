@@ -78,7 +78,7 @@ def process_data(response, api_info)
           :title => show["Title"],
           :channel_name => show["CLetter"],
           :start_time => Chronic.parse(show["STime"]),
-          :duration => show["duration"].to_i,
+          :duration => show["Dur"].to_i,
           :rep => show["Rep"],
           :new => show["New"].to_s,
           :logo => show["Logo"],
