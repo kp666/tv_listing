@@ -83,7 +83,7 @@ def process_data(response, api_info)
           :new => show["New"].to_s,
           :logo => show["Logo"],
           :prem => show["Prem"],
-          :finish_time => Chronic.parse(show["STime"]) + show["duration"].to_i.minutes
+          :finish_time => Chronic.parse(show["STime"]) + show["Dur"].to_i.minutes
       )
       category_ids = show["Categories"].first["Category"].map { |ids| ids["Id"].to_i } rescue []
       d.category_ids = Category.where(:id => category_ids).pluck(:id)
