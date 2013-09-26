@@ -95,7 +95,12 @@ app_config[:msn_api].each do |api_info|
     faraday.adapter Faraday.default_adapter # make requests with Net::HTTP
   end
   response = @conn.get api_info[:get][:url], api_info[:get][:params]
-  process_data(response, api_info) if response.status.to_i == 200
+ if response.status.to_i == 200
+   process_data(response, api_info)
+ else
+   p response.inspect
+ end
+
 
 
 end
