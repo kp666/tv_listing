@@ -40,8 +40,8 @@ def process_show(daily_show, api_info)
           duration: schedule[:Duration],
           channel_no: schedule[:Channel],
           start_time: (Time.at(schedule[:StartTime].to_f/1000.00) rescue schedule[:StartTime].to_f/1000.00),
-          repeat: schedule[:Repeat],
-          new: schedule[:New],
+          repeat: schedule[:Repeat].to_s,
+          new: schedule[:New].to_s,
           tv_rating: schedule[:TVRating],
           series_id: schedule[:SeriesID],
           show_id: s.id
