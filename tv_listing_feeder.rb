@@ -7,6 +7,7 @@ app_config = YAML.load_file("config/app.yml").deep_symbolize_keys!
 def process_show(daily_show, api_info)
   response = @conn.get api_info[:search][:url], api_info[:search][:params].merge(:title => daily_show.title)
   return unless response.status.to_i == 200
+  return unless response.body
   hash = ExecJS.eval(JSON.load response.body)
   hash.deep_symbolize_keys!
   shows = hash[:shows]
@@ -35,7 +36,7 @@ def process_show(daily_show, api_info)
           affiliate: schedule[:Affiliate],
           channel_name: schedule[:CallLetters],
           duration: schedule[:Duration],
-          start_time: (Time.at(schedule[:StartTime].to_f/1000.00) rescue schedule[:StartTime].to_f/1000.00) ,
+          start_time: (Time.at(schedule[:StartTime].to_f/1000.00) rescue schedule[:StartTime].to_f/1000.00),
           repeat: schedule[:Repeat],
           new: schedule[:New],
           tv_rating: schedule[:TVRating],
@@ -50,6 +51,7 @@ def process_show(daily_show, api_info)
 end
 
 def process_data(response, api_info)
+  return unless reponse.body
   xml = response.body
   hash = XmlSimple.xml_in(xml)
   data = hash["GuideData"].first
@@ -95,12 +97,11 @@ app_config[:msn_api].each do |api_info|
     faraday.adapter Faraday.default_adapter # make requests with Net::HTTP
   end
   response = @conn.get api_info[:get][:url], api_info[:get][:params]
- if response.status.to_i == 200
-   process_data(response, api_info)
- else
-   p response.inspect
- end
-
+  if response.status.to_i == 200
+    process_data(response, api_info)
+  else
+    p response.inspect
+  end
 
 
 end
