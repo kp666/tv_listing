@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130916144734) do
+ActiveRecord::Schema.define(:version => 20130925072914) do
 
   create_table "categories", :id => false, :force => true do |t|
     t.integer "id",     :null => false
@@ -41,5 +41,36 @@ ActiveRecord::Schema.define(:version => 20130916144734) do
     t.string   "prem"
     t.datetime "finish_time"
   end
+
+  create_table "schedules", :force => true do |t|
+    t.integer  "channel_id"
+    t.string   "affiliate"
+    t.string   "channel_name"
+    t.integer  "duration"
+    t.datetime "start_time"
+    t.string   "repeat"
+    t.string   "new"
+    t.integer  "channel_no"
+    t.integer  "series_id"
+    t.integer  "show_id"
+  end
+
+  create_table "shows", :force => true do |t|
+    t.string  "title"
+    t.integer "program_id"
+    t.string  "lead_actors"
+    t.text    "description"
+    t.string  "directors"
+    t.string  "episode_title"
+    t.string  "other_credits"
+    t.string  "lead_host"
+    t.string  "hosts"
+    t.string  "actors"
+    t.string  "mpaa"
+    t.string  "star_rating"
+    t.string  "year"
+  end
+
+  add_index "shows", ["program_id"], :name => "index_shows_on_program_id", :unique => true
 
 end

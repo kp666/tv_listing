@@ -4,10 +4,13 @@ Time.zone="UTC"
 Chronic.time_class = Time.zone
 app_config = YAML.load_file("config/app.yml").deep_symbolize_keys!
 
+def process_repeats(daily_show)
+
+end
+
 def process_data(response)
   xml = response.body
   hash = XmlSimple.xml_in(xml)
-
   data = hash["GuideData"].first
   categories = data["RLevelCat"].first["Category"]
   Category.delete_all
@@ -16,7 +19,6 @@ def process_data(response)
     cat[:id] = c["Id"].to_i
     cat.save rescue p "failed to create category:" + c["Name"]
   end
-  pp Category.all
   channels = hash["GuideData"].first["channels"].first["ch"]
   channels.each do |channel|
     shows = channel["show"]

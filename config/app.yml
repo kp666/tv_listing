@@ -8,3 +8,11 @@ msn_api:
       format: xml
       mkt: hi-in
       timezoneOffset: 330
+    search:
+     url:  DiscoveryWS/ExactSearch2.ashx
+     params:
+      source: tv
+      timezoneOffset: 330
+      mkt: hi-in
+      observesDST: false
+
