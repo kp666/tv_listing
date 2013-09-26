@@ -9,6 +9,7 @@ class CreateSchedules < ActiveRecord::Migration
       t.datetime :start_time
       t.string :repeat
       t.string :new
+       t.string :tv_rating
       t.integer :channel_no
       t.integer :series_id
       t.integer :show_id

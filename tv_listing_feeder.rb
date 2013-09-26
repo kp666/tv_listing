@@ -4,11 +4,52 @@ Time.zone="UTC"
 Chronic.time_class = Time.zone
 app_config = YAML.load_file("config/app.yml").deep_symbolize_keys!
 
-def process_repeats(daily_show)
+def process_show(daily_show, api_info)
+  response = @conn.get api_info[:search][:url], api_info[:search][:params].merge(:title => daily_show.title)
+  return unless response.status.to_i == 200
+  hash = ExecJS.eval(JSON.load response.body)
+  hash.deep_symbolize_keys!
+  shows = hash[:shows]
+  shows.each do |show|
+    show.deep_symbolize_keys!
+    s= Show.create(
+        title: show[:title],
+        program_id: show[:ProgramID],
+        lead_actors: show[:LeadActors],
+        description: show[:Description],
+        directors: show[:Directors],
+        episode_title: show[:EpisodeTitle],
+        lead_host: show[:LeadHost],
+        hosts: show[:Hosts],
+        actors: show[:Actors],
+        mpaa: show[:MPAA],
+        star_rating: show[:StarRating],
+        year: show[:Year],
 
+    )
+    schedules = show[:Schedule]
+    schedules.each do |schedule|
+      schedule.deep_symbolize_keys!
+      sch= Schedule.create(
+          channel_id: schedule[:ChanID],
+          affiliate: schedule[:Affiliate],
+          channel_name: schedule[:CallLetters],
+          duration: schedule[:Duration],
+          start_time: (Time.at(schedule[:StartTime].to_f/1000.00) rescue schedule[:StartTime].to_f/1000.00) ,
+          repeat: schedule[:Repeat],
+          new: schedule[:New],
+          tv_rating: schedule[:TVRating],
+          series_id: schedule[:SeriesID],
+          show_id: s[:id]
+
+      )
+    end
+
+
+  end
 end
 
-def process_data(response)
+def process_data(response, api_info)
   xml = response.body
   hash = XmlSimple.xml_in(xml)
   data = hash["GuideData"].first
@@ -41,19 +82,20 @@ def process_data(response)
       category_ids = show["Categories"].first["Category"].map { |ids| ids["Id"].to_i } rescue []
       d.category_ids = Category.where(:id => category_ids).pluck(:id)
       d.save
+      process_show(d, api_info)
     end
   end
 end
 
 app_config[:msn_api].each do |api_info|
   api_info.deep_symbolize_keys!
-  conn = Faraday.new(:url => api_info[:site]) do |faraday|
+  @conn = Faraday.new(:url => api_info[:site]) do |faraday|
     faraday.request :url_encoded # form-encode POST params
     faraday.response :logger # log requests to STDOUT
     faraday.adapter Faraday.default_adapter # make requests with Net::HTTP
   end
-  response = conn.get api_info[:get][:url], api_info[:get][:params]
-  process_data(response) if response.status.to_i == 200
+  response = @conn.get api_info[:get][:url], api_info[:get][:params]
+  process_data(response, api_info) if response.status.to_i == 200
 
 
 end

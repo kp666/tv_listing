@@ -12,3 +12,4 @@ gem 'activesupport', "~>3.2"
 gem "activerecord", "~>3.2"
 gem "rails", "~>3.2"
 gem 'execjs'
+gem 'pry'

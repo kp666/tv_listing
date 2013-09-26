@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(:version => 20130925072914) do
     t.datetime "start_time"
     t.string   "repeat"
     t.string   "new"
+    t.string   "tv_rating"
     t.integer  "channel_no"
     t.integer  "series_id"
     t.integer  "show_id"
