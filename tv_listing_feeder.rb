@@ -16,7 +16,7 @@ def process_show(daily_show, api_info)
     show.deep_symbolize_keys!
     s= Show.where(program_id: show[:ProgramID]).first_or_create
     s.update_attributes(
-        title: show[:title],
+        title: show[:Title],
         lead_actors: show[:LeadActors],
         description: show[:Description],
         directors: show[:Directors],
@@ -79,7 +79,7 @@ def process_data(response, api_info)
           :start_time => Chronic.parse(show["STime"]),
           :duration => show["duration"].to_i,
           :rep => show["Rep"],
-          :new => show["New"],
+          :new => show["New"].to_s,
           :logo => show["Logo"],
           :prem => show["Prem"],
           :finish_time => Chronic.parse(show["STime"]) + show["duration"].to_i.minutes
