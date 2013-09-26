@@ -26,7 +26,8 @@ def process_show(daily_show, api_info)
         actors: show[:Actors],
         mpaa: show[:MPAA],
         star_rating: show[:StarRating],
-        year: show[:Year]
+        year: show[:Year],
+        other_credits: show[:OtherCredits]
 
     )
 
