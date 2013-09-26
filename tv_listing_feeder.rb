@@ -1,5 +1,6 @@
 $:<< "."
 require 'requirements'
+require 'pry'
 Time.zone="UTC"
 Chronic.time_class = Time.zone
 app_config = YAML.load_file("config/app.yml").deep_symbolize_keys!
@@ -13,9 +14,9 @@ def process_show(daily_show, api_info)
   shows = hash[:shows]
   shows.each do |show|
     show.deep_symbolize_keys!
-    s= Show.create(
+    s= Show.where(program_id: show[:ProgramID]).first_or_create
+    s.update_attributes(
         title: show[:title],
-        program_id: show[:ProgramID],
         lead_actors: show[:LeadActors],
         description: show[:Description],
         directors: show[:Directors],
@@ -25,9 +26,10 @@ def process_show(daily_show, api_info)
         actors: show[:Actors],
         mpaa: show[:MPAA],
         star_rating: show[:StarRating],
-        year: show[:Year],
+        year: show[:Year]
 
     )
+
     schedules = show[:Schedule]
     schedules.each do |schedule|
       schedule.deep_symbolize_keys!
@@ -36,12 +38,13 @@ def process_show(daily_show, api_info)
           affiliate: schedule[:Affiliate],
           channel_name: schedule[:CallLetters],
           duration: schedule[:Duration],
+          channel_no: schedule[:Channel],
           start_time: (Time.at(schedule[:StartTime].to_f/1000.00) rescue schedule[:StartTime].to_f/1000.00),
           repeat: schedule[:Repeat],
           new: schedule[:New],
           tv_rating: schedule[:TVRating],
           series_id: schedule[:SeriesID],
-          show_id: s[:id]
+          show_id: s.id
 
       )
     end
@@ -105,6 +108,7 @@ app_config[:msn_api].each do |api_info|
 
 
 end
+
 
 
 
